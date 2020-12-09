@@ -18,6 +18,31 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "kafka-exporter.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+          "ad.datadoghq.com/{{ .Chart.Name }}.check_names": |
+            ["openmetrics"]
+          "ad.datadoghq.com/{{ .Chart.Name }}.init_configs": |
+            [{}]
+          "ad.datadoghq.com/{{ .Chart.Name }}.instances": |
+            [
+              {
+                "prometheus_url": "http://%%host%%:%%port_metrics%%/metrics",
+                "namespace": "kafka_exporter",
+                "metrics": [ {
+                  "kafka_brokers": "kafka_brokers",
+                  "kafka_topic_partitions": "kafka_topic_partitions",
+                  "kafka_topic_partition_current_offset": "kafka_topic_partition_current_offset",
+                  "kafka_topic_partition_oldest_offset": "kafka_topic_partition_oldest_offset",
+                  "kafka_topic_partition_in_sync_replica": "kafka_topic_partition_in_sync_replica",
+                  "kafka_topic_partition_leader": "kafka_topic_partition_leader",
+                  "kafka_topic_partition_leader_is_preferred": "kafka_topic_partition_leader_is_preferred",
+                  "kafka_topic_partition_replicas": "kafka_topic_partition_replicas",
+                  "kafka_topic_partition_under_replicated_partition": "kafka_topic_partition_under_replicated_partition",
+                  "kafka_consumergroup_current_offset": "kafka_consumergroup_current_offset",
+                  "kafka_consumergroup_lag": "kafka_consumergroup_lag"
+                }]
+              }
+            ]
     spec:
       containers:
         - name: {{ .Chart.Name }}
